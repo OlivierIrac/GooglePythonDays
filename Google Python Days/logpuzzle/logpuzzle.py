@@ -19,6 +19,14 @@ Here's what a puzzle url looks like:
 """
 
 
+def sort_urls(url):
+    find = re.search(r'-\w+-(\w+)\.jpg', url)
+    if find:
+        return find.group(1)
+    else:
+        return url
+
+
 def read_urls(filename):
     """Returns a list of the puzzle urls from the given log file,
     extracting the hostname from the filename itself.
@@ -33,14 +41,10 @@ def read_urls(filename):
     finds = re.findall(r'GET (\S*puzzle\S*.jpg) ', text)
     for find in finds:
         imageName = find.split('/')[-1]
-        URLsList.append('https://developers.google.com/edu/python/images/puzzle/' + imageName)
-    # remove duplicates, keep only highest rank
-    URLsList.sort()
-    lastURL = ''
-    for URL in URLsList:
-        if URL == lastURL:
-            URLsList.remove(URL)
-        lastURL = URL
+        URL = 'https://developers.google.com/edu/python/images/puzzle/' + imageName
+        if URL not in URLsList:
+            URLsList.append(URL)
+    URLsList.sort(key=sort_urls)
     return URLsList
 
 
